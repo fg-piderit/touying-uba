@@ -1,0 +1,4 @@
+[package]
+name = "touying-uba"
+version = "0.1.0"
+entrypoint = "uba-slides.typ"
