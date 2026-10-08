@@ -71,52 +71,80 @@
 /* Title slide -------------------------------------------------------------- */
 #let title-slide(..args) = touying-slide-wrapper(self => {
   let info = self.info + args.named()
-  let header = grid(
-    columns: (auto, 1fr),
-    rows: 100%,
-    fill: (rgb("#1D2554"), rgb("#91BDE0")),
-    inset: (x: 2em),
-    align: (horizon, horizon + right),
-    text(fill: self.colors.neutral-lightest, info.tipo),
-    text(fill: self.colors.primary, utils.display-info-date(self)),
-  )
+  let header = {
+    set text(size: 0.9em)
+    grid(
+      columns: (auto, 1fr),
+      rows: 100%,
+      fill: (self.colors.primary, self.colors.primary-light),
+      inset: (x: 2em),
+      align: (horizon, horizon),
+      text(fill: self.colors.neutral-lightest, style: "italic", utils.display-info-date(self)),
+      text(fill: self.colors.primary, [~]),
+    )
+  }
   let footer = grid(
     columns: (1fr, 1fr),
     rows: 100%,
     fill: self.colors.secondary,
     align: (horizon + center, horizon),
-    image("svg/logo_sociales_ba.svg", height: 50%),
+    image("svg/logo_sociales_ba.svg", height: 45%),
     image("svg/sep_triangulos_pres_3s4.svg", height: 100%)
   )
   let body = {
-    block(width: 80%, height: 50%, inset: (bottom: 2em), {
-      set text(fill: self.colors.primary)
-      set align(bottom)
-      text(size: 1.75em, weight: "black", info.title)
-      if info.subtitle != none {
-        linebreak()
-        text(size: 1.25em, weight: "bold", info.subtitle)
+    block(
+      width: 100%,
+      height: auto,
+      inset: (y: 2em, x: 2em),
+      fill: self.colors.primary-lightest,
+      {
+        set text(fill: self.colors.primary)
+        set align(horizon)
+        text(size: 1.75em, weight: "black", info.title)
+        if info.subtitle != none {
+          linebreak()
+          text(size: 1.25em, weight: "bold", info.subtitle)
+        }
       }
-    })
+    )
 
-    set text(fill: self.colors.neutral-darkest)
-    if info.author != none {
-      block(info.author, spacing: 1em)
-    }
-    if info.contact != none {
-      block(info.contact, spacing: 1em)
-    }
+    set text(fill: self.colors.neutral-darkest, size: 0.9em)
+    show: block.with(
+      width: 100%,
+      above: 2em,
+      inset: (x: 2em)
+    )
+    grid(
+      columns: (1fr, 1fr),
+      {
+        if info.author != none { block(info.author) }
+        if info.contact != none { block(info.contact) }
+      },
+      {
+        if info.tipo-materia != none {
+          block[
+            #text(weight: "bold", info.tipo-materia)
+            #linebreak()
+            #if info.nombre-materia != none { info.nombre-materia}
+          ]
+        }
+        if info.titular != none {
+          block[
+            #text(weight: "bold")[Titular de cátedra]
+            #linebreak()
+            #info.titular
+          ]
+        }
+      }
+    )
   }
 
   self = utils.merge-dicts(
     self,
     config-page(
-      margin: (y: 3em, x: 2em),
-      background: place(top, rect(
-        fill: self.colors.primary-lightest,
-        width: 100%,
-        height: 50%,
-      )),
+      margin: (y: 2.5em, x: 0em),
+      header-ascent: 0pt,
+      footer-descent: 0pt,
       header: header,
       footer: footer,
     ),
@@ -197,7 +225,7 @@
   ..args,
   body,
 ) = {
-  set text(size: 20pt, font: "Bitter Pro")
+  set text(size: 20pt, font: "Bitter Pro", number-type: "old-style")
   show heading.where(level: 1): set heading(numbering: "1.1.")
   show raw.where(block: true): it => block(width: 100%, stroke: black, inset: 1em, it)
 
